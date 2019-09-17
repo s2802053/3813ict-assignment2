@@ -1,0 +1,9 @@
+.label {
+    margin-bottom: 7px;
+    display: inline-block;
+    width: 20%;
+}
+
+.textInput{
+    width: 60%;
+}
