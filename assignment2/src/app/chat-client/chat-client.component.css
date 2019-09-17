@@ -1,0 +1,155 @@
+.groupListContainer{
+    height: 100vh;
+    width: 8.33vw;
+    background-color: #182628;
+    border-right: 1px solid #cccccc;
+    padding: 10px 10px;
+    color: white;
+    position: absolute;
+    left: -8.33vw;
+    z-index: 100;
+}
+
+.channelListContainer {
+    height: 100vh;
+    padding: 0px;
+    border-right: 1px solid #dddddd;
+    background-color: #222629;
+    color: white;
+}
+
+.activeChannelContainer{
+    background-color: #474b4f;
+    height: 100vh;
+    padding: 0px;
+    color: white;
+}
+
+.group{
+    width: 90px;
+    height: 90px;
+    border: 1px solid #dddddd;
+    padding: 30px 12px;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.group:hover{
+    background-color:white ;
+    color: #182628;
+}
+
+#channelListContent{
+    height: 80%;
+    width: 100%;
+}
+
+.channel{
+    height: 7%; 
+    padding: 5px 10px;
+    background-color: #383c3e;
+    margin-bottom: 1px;
+}
+
+.channel:hover {
+    background-color: #222629;
+}
+
+.headerBar{
+    width: 100%;
+    height: 7%;
+    border-bottom: 1px solid #dddddd;
+    padding: 8px 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.activeChannelContent{
+    width: 100%;
+    height: 93%;
+}
+
+.messageHistory{
+    height: 85%;
+    width: 100%;
+}
+
+.inputBox{
+    height: 15%;
+    width: 100%;
+    padding: 10px;      
+}
+
+#textInput{
+    width: 100%;
+    height: 80%;
+}
+
+#user{
+    float: right;
+    height: 100%;
+}
+
+.headerBar h4 {
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.options {
+    float: right;
+}
+
+.channelHeader{
+    width: 10%;
+    display: inline-block;
+}
+
+.toggle {
+    color: white;
+}
+
+#groupListToggle{
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background-color: white;
+    z-index: 101;
+}
+
+#groupListToggle:hover{
+    cursor: pointer;
+}
+
+.showGroups{
+    position: absolute;
+    left: 0px;
+}
+
+.animate-left{
+    position:absolute; 
+    left: 0px; 
+    animation: animateleft 0.4s
+}
+@keyframes animateleft{
+    from {
+        left:-300px;
+    } 
+    to {
+        left:0;
+    }
+}
+
+.animate-right{
+    position: absolute; 
+    left: -8.33vw; 
+    animation: animateRight 0.4s
+}
+@keyframes animateRight {
+    from{
+        left: 0;
+    } 
+    to {
+        left: -8.33vw;
+    }
+}

@@ -1,0 +1,67 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="groupListContainer" [ngClass]="{'animate-left': showGroups, 'animate-right': !showGroups && showHideAnimation}">
+            <div *ngFor="let group of groups; index as i" (click)="loadChannels(i)" class="group">
+                {{group.groupId}}
+            </div>
+            <div *ngIf="role && role != 'nonAdmin'" (click)="createGroup()" class="group">+</div>
+        </div>
+        <div class="channelListContainer col-md-2">
+            <div class="headerBar">
+                <div class="dropdown">
+                        {{groupName()}}
+                        <button *ngIf="showGroupControls()" class="toggle btn dropdown-toggle options" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div *ngIf="activeGroup >= 0" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" (click)="createChannel()">Create channel</a>
+                            <a class="dropdown-item" (click)="addUserToGroup()">Add user</a>
+                            <a class="dropdown-item" (click)="removeUserFromGroup()">Remove user</a>
+                            <a class="dropdown-item" (click)="delGroup()">Delete group</a>
+                        </div>
+                </div>
+            </div>
+            <div id="channelListContent">
+                <div *ngFor="let channel of channels; index as i" (click)="getMessages(i)" class="channel">
+                    #{{channel.name}}
+                </div>
+            </div>
+        </div>
+        <div class="activeChannelContainer col-md-10">
+            <div class="headerBar">
+                    <div *ngIf="activeChannel >= 0" class="dropdown channelHeader">
+                        #{{channelName()}}
+                        <button *ngIf="role && ( role === 'superAdmin' || ( groups[activeGroup].isAdmin || groups[activeGroup].isAssistant ) )" class="toggle btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div *ngIf="activeGroup >= 0" class="dropdown-menu" aria-labelledby="dropdownMenuButton">                            
+                            <a class="dropdown-item" (click)="addUserToChannel()">Add user</a>
+                            <a class="dropdown-item" (click)="removeUserFromChannel()">Remove user</a>
+                            <a class="dropdown-item" (click)="delChannel()">Delete channel</a>
+                        </div>
+                    </div>
+                <div id="user">
+                    <div class="dropdown">
+                        Signed in as {{user}}
+                        <button class="toggle btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">                            
+                            <a *ngIf="role && role != '2'" class="dropdown-item" (click)="createUser()">Create user</a>
+                            <a *ngIf="role && role === '0'" class="dropdown-item" (click)="listUsers()">Manage users</a>
+                            <a class="dropdown-item" (click)="logout()">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="activeChannelContent">
+                <div class="messageHistory">
+                    <p *ngFor="let message of history">
+                        <{{message.timestamp}}> {{message.username}}: {{message.message}}
+                    </p>
+                </div>
+                <div class="inputBox">
+                    <input id="textInput" type="text" placeholder="Enter message" name="messageInput" [(ngModel)]="messageInput">
+                    <button (click)="addMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="groupListToggle" (click)="toggleGroupList()">
+    ->
+</div>
