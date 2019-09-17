@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h4 class="modal-title">Users</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Delete user</th>
+        </tr>
+        <tr *ngFor="let user of users; index as i">
+            <td>{{user.username}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.isSuperAdmin ? "SuperAdmin" : user.isGroupAdmin ? "GroupAdmin" : "NonAdmin"}}</td>
+            <td><a *ngIf="i > 0" (click)="deleteUser(i)">Delete</a></td>
+        </tr>
+    </table>
+  </div>
+  <div class="modal-footer">
+  </div>

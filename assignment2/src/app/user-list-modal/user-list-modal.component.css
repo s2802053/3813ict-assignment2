@@ -1,0 +1,11 @@
+*{
+    font-size: 12px;
+}
+
+td, th {
+    padding: 5px 20px;
+}
+
+tr {
+    margin-bottom: 50px;
+}
