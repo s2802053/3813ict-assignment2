@@ -18,7 +18,12 @@ router.get('/getGroups', (req, res) => {
                     const isAdmin = group.admins.indexOf(userId) !== -1;
 
                     if (isUser || isAssistant || isAdmin){
-                        groupIds.push(group.id);
+                        groupIds.push({
+                            id: group.id,
+                            groupId: group.groupId,
+                            isAdmin: isAdmin,
+                            isAssistant: isAssistant
+                        });
                     }
                 });
                 res.json({success: true, err: null, data: groupIds});
@@ -26,14 +31,27 @@ router.get('/getGroups', (req, res) => {
         })
 });
 
-router.get("/create", (req, res) => {
+router.post("/create", (req, res) => {
     // create a new user
     
-    const { username, email, password, role } = req.query;
+    const { username, email, password, role } = req.body;
+    console.log(role);
 
+    let permissionStr;
+    switch (Number(role)){
+        case 0:
+            permissionStr = "createSuperAdmin";
+            break;
+        case 1:
+            permissionStr = "createGroupAdmin";
+            break;
+        case 2:
+            permissionStr = "createRegUser";
+            break;
+    }
     if (!(username && email && password && role)){
         res.json({success: false, err: "Invalid parameters", data: null});
-    } else if (!req.user.can("createRegUser")){
+    } else if (!req.user.can(permissionStr)){
         res.json({success: false, err: "Insufficient permissions", data: null});
     } else {
         let user = new User({
@@ -49,9 +67,9 @@ router.get("/create", (req, res) => {
     }
 });
 
-router.get('/delete', (req, res) => {
+router.post('/delete', (req, res) => {
 
-    const { username } = req.query;
+    const { username } = req.body;
 
     if (!username){
         res.json({success: false, err: "Invalid parameters", data: null});
