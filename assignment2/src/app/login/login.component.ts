@@ -24,19 +24,16 @@ export class LoginComponent implements OnInit {
     // Sends http request to server to authenticate user, if
     // request is successful store the username in local storage
     // and navigate to the chat-client.
-    this.http.post<Response>("http://localhost:3000/api/auth/login", {username: this.username, password: this.password})
+    this.http.post<Response>("/api/auth/login", {username: this.username, password: this.password})
       .subscribe(res => {
-        console.log(res);
         if (res.success){
-          if (res.data.valid){
-            let user = res.data.userDetails;
-            let role = user.isSuperAdmin ? "superAdmin" : user.isGroupAdmin ? "groupAdmin" : "nonAdmin";
+            let user = res.data;
             localStorage.setItem("username", user.username);
-            localStorage.setItem("user-role", role);
+            localStorage.setItem("user-id", user.id);
+            localStorage.setItem("user-role", user.role);
             this.router.navigateByUrl("chat-client");
-          } else {
-            this.showError = true;
-          }
+        } else {
+          this.showError = true;
         }
       })
   }
