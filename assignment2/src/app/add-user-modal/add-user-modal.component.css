@@ -1,0 +1,24 @@
+.radio {
+    display: inline-block;
+    margin: 0px 10px;
+}
+
+.error {
+    background-color: #e65c53;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.span{
+    margin-right: 5px;
+}
+
+.label {
+    margin-bottom: 7px;
+    display: inline-block;
+    width: 20%;
+}
+
+.textInput{
+    width: 60%;
+}
