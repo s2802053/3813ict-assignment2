@@ -8,11 +8,20 @@ import { Message } from 'model/Message';
 })
 export class SocketService {
   private socket;
-  constructor() { }
+  private connected: boolean;
+  
+  constructor() {
+    this.connected = false;
+   }
+
   async initSocket(namespace){
     const user = await localStorage.getItem("username");
     this.socket = io('http://localhost:3000' + namespace, {query: "user=" + user});
-    console.log(this.socket);
+    this.connected = true;
+  }
+
+  isConnected(){
+    return this.connected;
   }
 
   onMessageReceived(){
@@ -33,5 +42,10 @@ export class SocketService {
 
   sendMessage(message){
     this.socket.emit('message', message);
+  }
+
+  disconnect(){
+    this.socket.disconnect();
+    this.connected = false;
   }
 }
