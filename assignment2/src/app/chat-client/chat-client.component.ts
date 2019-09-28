@@ -9,6 +9,7 @@ import { UserListModalComponent } from '../user-list-modal/user-list-modal.compo
 import { AddGroupModalComponent} from '../add-group-modal/add-group-modal.component';
 import { Router } from '@angular/router';
 import { SocketService } from '../services/socket.service';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class ChatClientComponent implements OnInit {
   private showHideAnimation: boolean;
   private role: string;
   private userId: string;
+  private subscription: any;
 
   private messageInput: string = "";
 
@@ -84,38 +86,40 @@ export class ChatClientComponent implements OnInit {
   }
 
   async getMessages(index: number){
-    // set the selected channel as the active
+    if (this.subscription){
+      this.subscription.unsubscribe();
+    }
+    if (this.socketService.isConnected()){
+      this.socketService.disconnect();
+    }// set the selected channel as the active
     // channel and retrieve messages for it.
-    this.activeChannel = index;
     // retrieve message history from api
     const groupId = this.groups[this.activeGroup].id;
-    const channelId = this.channels[this.activeChannel].id;
+    const channelId = this.channels[index].id;
     this.http.get<Response>(`/api/channel/getMessages?groupId=${groupId}&channelId=${channelId}`)
-      .subscribe(res => {
+      .subscribe(async res => {
         if (res.success){
+          this.activeChannel = index;
           this.history = res.data;
+          // connect to socket
+          await this.socketService.initSocket('/' + this.channels[this.activeChannel].id);
+          // set callback when message is received
+          this.subscription = this.socketService.onMessageReceived().subscribe(message => {
+            this.history.push(message)
+          });
+          // set callback when user joins the channel
+          this.socketService.onUserJoin().subscribe(user => {
+            const d = new Date();
+            this.history.push({
+              username: null,
+              timestamp: d.toLocaleString(),
+              message: `${user} has joined the channel`
+            });
+          });
         } else {
           console.log(res.err);
         }
       })
-
-    // connect to socket
-    await this.socketService.initSocket('/' + this.channels[this.activeChannel].id);
-
-    // set callback when message is received
-    this.socketService.onMessageReceived().subscribe(message => {
-      this.history.push(message)
-    });
-
-    // set callback when user joins the channel
-    this.socketService.onUserJoin().subscribe(user => {
-      const d = new Date();
-      this.history.push({
-        username: null,
-        timestamp: d.toLocaleString(),
-        message: `${user} has joined the channel`
-      });
-    });
   }
 
   addMessage(){
