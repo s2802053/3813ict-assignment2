@@ -71,8 +71,8 @@ router.post('/delete', (req, res) => {
     }
 });
 
-router.get('/createChannel', (req, res) => {
-    const { groupId, channelId } = req.query;
+router.post('/createChannel', (req, res) => {
+    const { groupId, channelId } = req.body;
 
     if (!(groupId && channelId)){
         res.json({success: false, err: "Invalid paramaters", data: null});
@@ -99,9 +99,6 @@ router.get('/createChannel', (req, res) => {
                         addNamespace(req.io, channel.id);
                         res.json({success: Boolean(group), err: err, data: group});
                     }
-
-
-                    
                 }) ;
             }
         });
