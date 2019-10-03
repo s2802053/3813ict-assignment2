@@ -31,7 +31,7 @@ export class ChatClientComponent implements OnInit {
 
   private messageInput: string = "";
 
-  private history: Message[] = [];
+  private history = [];
 
   constructor(private http: HttpClient, public modal: NgbModal, public router: Router, public socketService: SocketService) {
     this.role = "";
@@ -50,11 +50,7 @@ export class ChatClientComponent implements OnInit {
 
     await this.loadGroups((data) => {
       if (this.activeGroup >= 0){
-        this.loadChannels(this.activeGroup, (data) => {
-          if (this.activeChannel >= 0){
-            this.getMessages(this.activeChannel);
-          }
-        });
+        this.loadChannels(this.activeGroup);
       }
     });
   }
@@ -81,6 +77,13 @@ export class ChatClientComponent implements OnInit {
       if (!res.success){ return }
       this.channels = res.data;
       this.activeChannel = res.data.length > 0 ? 0 : -1;
+      // if there is a channel in the group (activeChannel === 0)
+      if (!this.activeChannel){
+        // load the messages for the channel
+        this.getMessages(this.activeChannel);
+      }
+      
+
       onSuccess(res.data);
     })
   }
@@ -105,15 +108,16 @@ export class ChatClientComponent implements OnInit {
           await this.socketService.initSocket('/' + this.channels[this.activeChannel].id);
           // set callback when message is received
           this.subscription = this.socketService.onMessageReceived().subscribe(message => {
-            this.history.push(message)
+            this.history.push({...message, joinMessage: false});
           });
           // set callback when user joins the channel
           this.socketService.onUserJoin().subscribe(user => {
             const d = new Date();
             this.history.push({
-              username: null,
+              joinMessage: true,
+              username: user,
               timestamp: d.toLocaleString(),
-              message: `${user} has joined the channel`
+              message: `has joined the channel`
             });
           });
         } else {
@@ -137,7 +141,7 @@ export class ChatClientComponent implements OnInit {
 
     this.http.post<Response>("/api/channel/addMessage", body).subscribe(res => {
       if (res.success){
-        console.log(res);
+        this.clearChatBox();
       } else if (res.err){
         console.log(res.err);
       }
@@ -169,6 +173,7 @@ export class ChatClientComponent implements OnInit {
         this.http.post<Response>("/api/group/create", {groupId: val.data}).subscribe(res => {
           console.log(res);
           if (res.success){
+            this.clearChatHistory();
             const group: Group = {
               id: res.data._id,
               groupId: res.data.groupId,
@@ -200,7 +205,9 @@ export class ChatClientComponent implements OnInit {
         let obj = {groupId: this.groups[this.activeGroup].id, channelId: val.data};
         this.http.post<Response>("/api/group/createChannel", obj).subscribe(res => {
           if (res.success){
+            this.clearChatHistory();
             this.loadChannels(this.activeGroup);
+            this.activeChannel = this.channels.length - 1;
           } else {
             console.log(res.err)
           }
@@ -216,14 +223,28 @@ export class ChatClientComponent implements OnInit {
 
     let caller = await localStorage.getItem("username");
     let groupId = this.groups[this.activeGroup].id;
-    this.http.post<Response>("/api/group/delete", { groupId: groupId }).subscribe(res => {
+    this.http.post<Response>("/api/group/delete", { groupId: groupId }).subscribe(async res => {
       if (res.success){
-        this.activeGroup--;
-        this.loadGroups();
+        this.loadGroups(data => {
+          if (this.activeGroup === 0){
+            this.loadChannels(this.activeGroup);
+          } else {
+            this.channels = [];
+            this.clearChatHistory();
+          }
+        });
       } else {
         console.log(res.err);
       }
     });
+  }
+
+  clearChatHistory(){
+    this.history = [];
+  }
+
+  clearChatBox(){
+    this.messageInput = "";
   }
 
   async delChannel(){
@@ -297,7 +318,7 @@ export class ChatClientComponent implements OnInit {
       let obj = {
         groupId: this.groups[this.activeGroup].id,
         channelId: this.channels[this.activeChannel].id,
-        username: val.data
+        username: val.data.toLowerCase(),
       }
       this.http.post<Response>("/api/channel/addUser", obj).subscribe(res => {
         if (!res.success){
@@ -334,9 +355,7 @@ export class ChatClientComponent implements OnInit {
     // to the login page.
     localStorage.setItem("username", null);
     localStorage.setItem("user-role", null);
-    this.http.post("/api/auth/logout", {}).subscribe(res => {
-      console.log(res);
-    });
+    this.http.post("/api/auth/logout", {}).subscribe(res => {});
     this.router.navigateByUrl("/login");
   }
 
