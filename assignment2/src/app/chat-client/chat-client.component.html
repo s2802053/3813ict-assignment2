@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div id="channelListContent">
-                <div *ngFor="let channel of channels; index as i" (click)="getMessages(i)" class="channel">
+                <div *ngFor="let channel of channels; index as i" (click)="getMessages(i)" class="channel" [ngClass]="{'activeChan': i===activeChannel}">
                     #{{channel.name}}
                 </div>
             </div>
@@ -51,17 +51,17 @@
             <div class="activeChannelContent">
                 <div class="messageHistory">
                     <p *ngFor="let message of history">
-                        <{{message.timestamp}}> {{message.username}}: {{message.message}}
+                        <{{message.timestamp}}> <strong>{{message.username}}</strong><span *ngIf="!message.joinMessage">: {{message.message}}</span> <span *ngIf="message.joinMessage"> has joined the channel</span>
                     </p>
                 </div>
                 <div class="inputBox">
-                    <input id="textInput" type="text" placeholder="Enter message" name="messageInput" [(ngModel)]="messageInput">
-                    <button (click)="addMessage()">Send</button>
+                    <input id="textInput" autocomplete="off"type="text" placeholder="Enter message" name="messageInput" [(ngModel)]="messageInput">
+                    <button id="sendButton" (click)="addMessage()">Send</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div id="groupListToggle" (click)="toggleGroupList()">
-    ->
+    Groups
 </div>

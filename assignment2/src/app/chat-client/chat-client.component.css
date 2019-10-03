@@ -52,6 +52,10 @@
     margin-bottom: 1px;
 }
 
+.activeChan {
+    background-color: #4c5051;
+}
+
 .channel:hover {
     background-color: #222629;
 }
@@ -73,6 +77,11 @@
 .messageHistory{
     height: 85%;
     width: 100%;
+    padding: 1vh 1vw;
+}
+
+textarea:focus, input:focus{
+    outline: none;
 }
 
 .inputBox{
@@ -82,8 +91,17 @@
 }
 
 #textInput{
-    width: 100%;
+    width: 90%;
     height: 80%;
+    padding: 0px 10px;
+    border-radius: 10px;
+}
+
+#sendButton {
+    height: 80%;
+    width: 8%;
+    margin-left: 1%;
+    border-radius: 10px;
 }
 
 #user{
@@ -112,9 +130,11 @@
 #groupListToggle{
     position: absolute;
     left: 0px;
-    bottom: 0px;
+    bottom: 5vh;
     background-color: white;
     z-index: 101;
+    height: 10vh;
+    width: 5vw;
 }
 
 #groupListToggle:hover{
