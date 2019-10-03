@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const mongoose = require('mongoose');
 let io = require('socket.io')(http);
-io = require(__dirname + '/sockets/addNamespaceForChannels')(io);
+require(__dirname + '/sockets/addNamespaceForChannels')(io);
 const api_route = require('./routes/routeHandler');
 
 mongoose.connect('mongodb://localhost:27017/chat-client', {
@@ -34,8 +34,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', api_route);
-
-
 
 http.listen(3000, () => {
     console.log("Server listening on port 3000");
